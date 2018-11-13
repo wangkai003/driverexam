@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.carshop.dao.OrderMapper">
+
+	<resultMap type="order" id="itemListMap">
+		<id column="id" property="id"/>
+		<result column="userid" property="userid"/>
+		<result column="orderprice" property="orderprice"/>
+		<collection property="itemList" javaType="java.util.List" ofType="item">
+			<id column="id" property="id"/>
+			<result column="itemnum" property="itemnum"/>
+			<result column="itemtime" property="itemtime"/>
+			<result column="carid" property="carid"/>
+			<result column="itemprice" property="itemprice"/>
+			<result column="estimate" property="estimate"/>
+			<result column="state" property="state"/>
+			<association property="car" javaType="car">
+				<id column="id" property="id"/>
+				<result column="carBrand" property="carBrand"/>
+				<result column="carSeries" property="carSeries"/>
+				<result column="carModel" property="carModel"/>
+				<result column="caryear" property="caryear"/>
+				<result column="price" property="price"/>
+				<result column="iocationCity" property="iocationCity"/>
+				<result column="mileage" property="mileage"/>
+				<result column="displacement" property="displacement"/>
+				<result column="carColor" property="carColor"/>
+				<result column="carCardFirstTime" property="carCardFirstTime"/>
+				<result column="contactPeople_id" property="contactPeople_id"/>
+				<result column="carimg" property="carimg"/>
+				<result column="carstate" property="carstate"/>
+			</association>
+		</collection>
+	</resultMap>
+	<select id="getOrderItemsList" resultMap="itemListMap" parameterType="Integer">
+		SELECT 
+		o.id,
+		o.userid,
+		o.orderprice,
+		i.id,
+		i.itemnum,
+		i.carid,
+		i.itemprice,
+		i.itemtime,
+		i.estimate,
+		i.state,
+		c.id,
+		c.carBrand,
+		c.carSeries,
+		c.carModel,
+		c.caryear,
+		c.price,
+		c.iocationCity,
+		c.mileage,
+		c.displacement,
+		c.carColor,
+		c.carCardFirstTime,
+		c.contactPeople_id,
+		c.carimg,
+		c.carstate
+		FROM
+		`order` o
+		LEFT OUTER JOIN
+		item i
+		ON
+		o.id=i.orderid
+		LEFT OUTER JOIN
+		car c
+		ON
+		i.carid=c.id
+		WHERE o.id=#{id}
+	</select>
+	
+	<insert id="insertOrder" parameterType="order" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `order` (userid,orderprice) VALUES (#{userid},#{orderprice});
+	</insert>
+	
+	<select id="getOrderByUserId" parameterType="Integer" resultType="Integer">
+		select id from `order` where userid = #{userid};
+	</select>
+</mapper>

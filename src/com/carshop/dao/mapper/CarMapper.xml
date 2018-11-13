@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.carshop.dao.CarMapper">
+
+	<select id="getCarById" resultType="car" parameterType="Integer">
+		select * from car where id=#{id}
+	</select>
+	
+	<select id="getCarByContactPeopleId" resultType="car" parameterType="Integer">
+		select * from car where contactPeople_id=#{contactPeople_id}
+	</select>
+	
+	<select id="getCarList" resultType="car">
+		select * from car
+	</select>
+	
+	<insert id="insertCar" parameterType="Car">
+		insert into car (
+		carBrand,
+		carSeries,
+		carModel,
+		caryear,
+		price,
+		iocationCity,
+		mileage,
+		displacement,
+		carColor,
+		carCardFirstTime,
+		contactPeople_id,
+		carimg,
+		carstate) values(#{carBrand},#{carSeries},#{carModel},#{caryear},#{price},#{iocationCity},#{mileage},#{displacement},#{carColor},#{carCardFirstTime},#{contactPeople_id},#{carimg},#{carstate})
+	</insert>
+	
+	<!-- 根据品牌模糊查询 -->
+	<select id="getTotalCountByBlur" resultType="Long">
+		select count(*) from car
+		where 1=1
+		<if test="carBrand != null">
+			and carBrand like "%"#{carBrand}"%"
+		</if>
+	</select>
+	
+	<select id="getCarListByBlur" resultType="car" parameterType="map">
+		select * from car
+		where 1=1
+		<if test="carBrand != null">
+			and carBrand like "%"#{carBrand}"%"
+		</if>
+		<if test="index != null">
+			limit #{index},#{currentCount}
+		</if> 
+	</select>
+	<!-- 根据car条件查询 -->
+	<select id="getTotalCountByCondition" resultType="Long">
+		select count(*) from car
+		where 1=1
+		<if test="car.carBrand != null">
+			and carBrand=#{car.carBrand}
+		</if>
+		<if test="car.carSeries != null">
+			and carSeries=#{car.carSeries}
+		</if>
+	</select>
+	
+	<select id="getCarListByCondition" resultType="car" parameterType="map">
+		select * from car
+		where 1=1
+		<if test="car.carBrand != null">
+			and carBrand=#{car.carBrand}
+		</if>
+		<if test="car.carSeries != null">
+			and carSeries=#{car.carSeries}
+		</if>
+		<if test="index != null">
+			limit #{index},#{currentCount}
+		</if> 
+	</select>
+	<!-- 根据price条件查询 -->
+	<select id="getTotalCountByPrice" resultType="Long">
+		select count(*) from car
+		where 1=1
+		<if test="car.carBrand != null">
+			and carBrand=#{car.carBrand}
+		</if>
+		<if test="car.carSeries != null">
+			and carSeries=#{car.carSeries}
+		</if>
+		<if test="start != null and end != null">
+			and price between #{start} and #{end}
+		</if>
+	</select>
+	
+	<select id="getCarListByPrice" resultType="car" parameterType="map">
+		select * from car
+		where 1=1
+		<if test="car.carBrand != null">
+			and carBrand=#{car.carBrand}
+		</if>
+		<if test="car.carSeries != null">
+			and carSeries=#{car.carSeries}
+		</if>
+		<if test="start != null and end != null">
+			and price between #{start} and #{end}
+		</if>
+		<if test="index != null">
+			limit #{index},#{currentCount}
+		</if> 
+	</select>
+	
+	<delete id="deleteCarById" parameterType="Integer">
+		delete from car where id=#{id}
+	</delete>
+	
+	<update id="updateCarById" parameterType="map">
+		update car set 
+		car.carBrand=#{car.carBrand},
+		car.carSeries=#{car.carSeries},
+		car.carModel=#{car.carModel},
+		car.price=#{car.price},
+		car.mileage=#{car.mileage},
+		car.displacement=#{car.displacement}
+		where id=#{car.id}
+	</update>
+</mapper>

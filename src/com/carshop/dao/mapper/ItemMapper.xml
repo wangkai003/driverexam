@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.carshop.dao.ItemMapper">
+
+	<insert id="insertItem" parameterType="Item">
+		insert into item 
+		(itemnum,carid,itemprice,itemtime,estimate,state,orderid) 
+		values (#{itemnum},#{carid},#{itemprice},#{itemtime},#{estimate},#{state},#{orderid})
+	</insert>
+	<resultMap type="Item" id="itemListMap">
+		<id column="id" property="id"/>
+			<result column="itemnum" property="itemnum"/>
+			<result column="itemtime" property="itemtime"/>
+			<result column="carid" property="carid"/>
+			<result column="itemprice" property="itemprice"/>
+			<result column="estimate" property="estimate"/>
+			<result column="state" property="state"/>
+			<association property="car" javaType="car">
+				<id column="id" property="id"/>
+				<result column="carBrand" property="carBrand"/>
+				<result column="carSeries" property="carSeries"/>
+				<result column="carModel" property="carModel"/>
+				<result column="caryear" property="caryear"/>
+				<result column="price" property="price"/>
+				<result column="iocationCity" property="iocationCity"/>
+				<result column="mileage" property="mileage"/>
+				<result column="displacement" property="displacement"/>
+				<result column="carColor" property="carColor"/>
+				<result column="carCardFirstTime" property="carCardFirstTime"/>
+				<result column="contactPeople_id" property="contactPeople_id"/>
+				<result column="carimg" property="carimg"/>
+				<result column="carstate" property="carstate"/>
+			</association>
+	</resultMap>
+	<select id="getItemByOrderId" parameterType="Integer" resultMap="itemListMap">
+		SELECT 
+		i.id,
+		i.itemnum,
+		i.carid,
+		i.itemprice,
+		i.itemtime,
+		i.estimate,
+		i.state,
+		c.id,
+		c.carBrand,
+		c.carSeries,
+		c.carModel,
+		c.caryear,
+		c.price,
+		c.iocationCity,
+		c.mileage,
+		c.displacement,
+		c.carColor,
+		c.carCardFirstTime,
+		c.contactPeople_id,
+		c.carimg,
+		c.carstate
+		FROM
+		`order` o
+		LEFT OUTER JOIN
+		item i
+		ON
+		o.id=i.orderid
+		LEFT OUTER JOIN
+		car c
+		ON
+		i.carid=c.id
+		WHERE o.id=#{id}
+	</select>
+	
+	<!-- 订单分页 -->
+	<select id="getTotalCountByItemNum" parameterType="String" resultType="Long">
+		select count(*) from item 
+		where 1=1
+		<if test="itemnum !=null">
+			and itemnum like "%"#{itemnum}"%"
+		</if>
+	</select>
+	
+	<resultMap type="Item" id="itemMap">
+		<id column="id" property="id"/>
+			<result column="itemnum" property="itemnum"/>
+			<result column="itemtime" property="itemtime"/>
+			<result column="carid" property="carid"/>
+			<result column="itemprice" property="itemprice"/>
+			<result column="estimate" property="estimate"/>
+			<result column="state" property="state"/>
+			<association property="car" javaType="car">
+				<id column="id" property="id"/>
+				<result column="carBrand" property="carBrand"/>
+				<result column="carSeries" property="carSeries"/>
+				<result column="carModel" property="carModel"/>
+				<result column="caryear" property="caryear"/>
+				<result column="price" property="price"/>
+				<result column="iocationCity" property="iocationCity"/>
+				<result column="mileage" property="mileage"/>
+				<result column="displacement" property="displacement"/>
+				<result column="carColor" property="carColor"/>
+				<result column="carCardFirstTime" property="carCardFirstTime"/>
+				<result column="contactPeople_id" property="contactPeople_id"/>
+				<result column="carimg" property="carimg"/>
+				<result column="carstate" property="carstate"/>
+			</association>
+	</resultMap>
+	<select id="getItemListByItemNum" parameterType="map" resultMap="itemMap">
+		SELECT 
+		i.id,
+		i.itemnum,
+		i.carid,
+		i.itemprice,
+		i.itemtime,
+		i.estimate,
+		i.state,
+		c.id,
+		c.carBrand,
+		c.carSeries,
+		c.carModel,
+		c.caryear,
+		c.price,
+		c.iocationCity,
+		c.mileage,
+		c.displacement,
+		c.carColor,
+		c.carCardFirstTime,
+		c.contactPeople_id,
+		c.carimg,
+		c.carstate
+		FROM
+		item i
+		LEFT OUTER JOIN
+		car c
+		ON
+		i.carid=c.id
+		where 1=1
+		<if test="itemnum !=null">
+			and itemnum like "%"#{itemnum}"%"
+		</if>
+		<if test="index != null">
+			limit #{index},#{currentCount}
+		</if>
+	</select>
+	<select id="getItemByCarId" parameterType="Integer" resultType="Item">
+		select * from item where carid=#{carid}
+	</select>
+	
+	<update id="updateEstimate" parameterType="map">
+		update item set estimate=#{estimate} where carid=#{carid}
+	</update>
+	
+	<update id="updateState" parameterType="map" >
+		update item set state=#{state} where id=#{id}
+	</update>
+	
+	<select id="getItemById" parameterType="Integer" resultType="Item">
+		select * from item where id=#{id}
+	</select>
+	
+	<delete id="deleteItemById" parameterType="Integer">
+		delete from item where id=#{id}
+	</delete>
+</mapper>
